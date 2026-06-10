@@ -68,7 +68,7 @@ python main.py
 ## Hazırlayanlar
 
 - Emir BAŞARAN
-- Berkay AKIN
+- Berkay AKİN
 
 **Danışman:** Hüseyin PARMAKSIZ  
 **Bilecik Şeyh Edebali Üniversitesi — 2026**
