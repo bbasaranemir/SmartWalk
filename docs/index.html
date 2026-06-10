@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartWalk — Edge-AI Tabanlı Yaya Geçidi İhlal Tespit Sistemi</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+    a { color: #63b3ed; }
+    a:focus { outline: 3px solid #63b3ed; outline-offset: 2px; }
+
+    header {
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      border-bottom: 3px solid #3182ce;
+    }
+    header .badge {
+      display: inline-block;
+      background: #3182ce;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 1.05rem;
+      color: #a0aec0;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      margin: 0.3rem;
+      transition: opacity 0.2s;
+    }
+    .btn:hover, .btn:focus { opacity: 0.85; }
+    .btn-primary { background: #3182ce; color: #fff; }
+    .btn-secondary { background: #2d3748; color: #e2e8f0; border: 1px solid #4a5568; }
+
+    main { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1a202c;
+      border: 1px solid #276749;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.9rem;
+    }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #48bb78;
+      animation: pulse 2s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem; }
+    .card {
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .card h3 { font-size: 1rem; font-weight: 700; color: #63b3ed; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.9rem; color: #a0aec0; }
+
+    section { margin-bottom: 3rem; }
+    section h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      border-left: 4px solid #3182ce;
+      padding-left: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .flow-step {
+      background: #2d3748;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      white-space: nowrap;
+    }
+    .arrow { color: #4a5568; font-size: 1.2rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { background: #2d3748; color: #63b3ed; text-align: left; padding: 0.6rem 1rem; }
+    td { padding: 0.6rem 1rem; border-bottom: 1px solid #2d3748; color: #a0aec0; }
+    tr:last-child td { border-bottom: none; }
+
+    .team { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .member {
+      background: #1a202c;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      min-width: 180px;
+    }
+    .member strong { color: #fff; display: block; margin-bottom: 0.25rem; }
+    .member span { font-size: 0.85rem; color: #a0aec0; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+      color: #4a5568;
+      border-top: 1px solid #2d3748;
+    }
+    footer a { color: #63b3ed; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Proje-I &mdash; YBS Bölümü</div>
+  <h1>SmartWalk</h1>
+  <p>Edge-AI Tabanlı Yaya Geçidi İhlal Tespit Sistemi</p>
+  <a href="https://github.com/bbasaranemir/SmartWalk" class="btn btn-primary" target="_blank" rel="noopener">
+    GitHub Deposu
+  </a>
+  <a href="https://github.com/bbasaranemir/SmartWalk/blob/master/README.md" class="btn btn-secondary" target="_blank" rel="noopener">
+    Dokümantasyon
+  </a>
+</header>
+
+<main>
+
+  <div class="status-bar" role="status" aria-live="polite">
+    <span class="dot" aria-hidden="true"></span>
+    <span>Sistem aktif &mdash; ESP32-S3 MJPEG stream + YOLOv8n gerçek zamanlı tespit çalışıyor</span>
+  </div>
+
+  <section aria-labelledby="features-heading">
+    <h2 id="features-heading">Temel Özellikler</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>🎥 ESP32-S3 Kamera</h3>
+        <p>OV2640 sensör, VGA çözünürlükte WiFi üzerinden MJPEG akışı sağlar (port 80).</p>
+      </div>
+      <div class="card">
+        <h3>🤖 YOLOv8n Tespiti</h3>
+        <p>Yaya geçidi bölgesindeki kişi ve araç tespiti; %40 güven eşiği, 10–15 FPS işleme.</p>
+      </div>
+      <div class="card">
+        <h3>📱 Telegram Bildirimi</h3>
+        <p>İhlal anında fotoğraf eki ile anlık bildirim; 30 saniyelik cooldown mekanizması.</p>
+      </div>
+      <div class="card">
+        <h3>☁️ Firebase Loglama</h3>
+        <p>Her ihlal Realtime Database'e tarih damgası ve görüntü yoluyla kaydedilir.</p>
+      </div>
+      <div class="card">
+        <h3>🗺️ Otomatik Bölge Tespiti</h3>
+        <p>Canny + HoughLinesP algoritmasıyla yaya geçidi otomatik algılanır, JSON'a kaydedilir.</p>
+      </div>
+      <div class="card">
+        <h3>🖥️ OLED Ekran</h3>
+        <p>SH1106 ekranda sistem durumu ve IP adresi gösterilir; fiziksel bağlantı kontrolü kolaylaşır.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="flow-heading">
+    <h2 id="flow-heading">Veri Akışı</h2>
+    <div class="flow" role="list">
+      <div class="flow-step" role="listitem">ESP32-S3 Kamera</div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="flow-step" role="listitem">MJPEG Stream</div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="flow-step" role="listitem">YOLOv8n Tespiti</div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="flow-step" role="listitem">Bölge Filtresi</div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="flow-step" role="listitem">Durum Makinesi</div>
+      <span class="arrow" aria-hidden="true">→</span>
+      <div class="flow-step" role="listitem">Telegram / Firebase</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="hardware-heading">
+    <h2 id="hardware-heading">Donanım</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th scope="col">Bileşen</th><th scope="col">Değer</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>İşlemci</td><td>ESP32-S3, Xtensa LX7 çift çekirdek 240 MHz</td></tr>
+          <tr><td>Kamera sensörü</td><td>OV2640 (entegre)</td></tr>
+          <tr><td>Çözünürlük</td><td>VGA 640×480, MJPEG</td></tr>
+          <tr><td>Ekran</td><td>SH1106 1.3" OLED (I2C)</td></tr>
+          <tr><td>Bağlantı</td><td>802.11 b/g/n WiFi</td></tr>
+          <tr><td>Besleme</td><td>5 V USB</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="team-heading">
+    <h2 id="team-heading">Ekip</h2>
+    <div class="team">
+      <div class="member">
+        <strong>Emir BAŞARAN</strong>
+        <span>YBS Bölümü</span>
+      </div>
+      <div class="member">
+        <strong>Berkay AKIN</strong>
+        <span>YBS Bölümü</span>
+      </div>
+      <div class="member">
+        <strong>Hüseyin PARMAKSIZ</strong>
+        <span>Danışman</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>
+    Bilecik Şeyh Edebali Üniversitesi &mdash; YBS Bölümü &mdash; Proje-I &mdash; 2026
+    &nbsp;|&nbsp;
+    <a href="https://github.com/bbasaranemir/SmartWalk" target="_blank" rel="noopener">GitHub</a>
+    &nbsp;|&nbsp;
+    <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank" rel="noopener">WCAG 2.1 AA</a>
+  </p>
+</footer>
+
+</body>
+</html>

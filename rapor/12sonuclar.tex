@@ -33,6 +33,17 @@ Sistemin mevcut sürümünde aşağıdaki sınırlamalar tespit edilmiştir:
   \item \textbf{Yaya geçidi perspektif açısı:} Canny+Hough algoritması, kameraya dik olmayan yaya geçitlerinde (perspektif bozulması olan sahnelerde) başarısız olabilmekte; bu durumda manuel 4-nokta seçici devreye girmektedir.
 \end{itemize}
 
+\subsection{Erişilebilirlik (WCAG) Değerlendirmesi}
+
+SmartWalk sistemi bir web uygulaması olmamakla birlikte, proje kapsamında geliştirilen GitHub Pages web sayfası W3C Web İçerik Erişilebilirlik Yönergeleri (WCAG 2.1) \cite{wcag2018} esas alınarak tasarlanmıştır. Bu çerçevede şu ilkelere uyulmuştur:
+
+\begin{itemize}
+  \item \textbf{Algılanabilirlik:} Tüm görseller \texttt{alt} niteliği ile açıklanmış, metin–arka plan renk kontrastı AA düzeyinde ($\geq 4.5$:1) tutulmuştur.
+  \item \textbf{Çalıştırılabilirlik:} Sayfa yalnızca klavye ile dolaşılabilecek şekilde yapılandırılmıştır; odak sırası mantıksal akışı izlemektedir.
+  \item \textbf{Anlaşılabilirlik:} Sayfa dili \texttt{lang="tr"} olarak bildirilmiş, teknik terimler açıklayıcı bağlamla sunulmuştur.
+  \item \textbf{Sağlamlık:} Geçerli HTML5 semantik ögeleri (\texttt{<header>}, \texttt{<main>}, \texttt{<footer>}) kullanılmış, yardımcı teknolojilerle uyumluluk gözetilmiştir.
+\end{itemize}
+
 \subsection{Gelecek Çalışmalar}
 
 Projenin ilerleyen aşamalarında şu geliştirmeler planlanmaktadır:
