@@ -29,8 +29,9 @@ U8G2_SH1106_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ OLED_SCL, /* data=*
 #define SIOC_GPIO_NUM      9
 
 // --- WiFi Ayarları ---
-const char *ssid = "Berkay adlı kişiye ait S23 FE";
-const char *password = "Berkay123";
+// Arduino IDE'de yuklemeden once kendi ag bilgilerinizi girin
+const char *ssid     = "WIFI_SSID_BURAYA";
+const char *password = "WIFI_SIFRE_BURAYA";
 
 // --- OpenCV ve Standart Stream Sınır Tanımı ---
 #define STREAM_BOUNDARY "123456789000000000000987654321"

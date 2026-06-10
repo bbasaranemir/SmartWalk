@@ -24,6 +24,9 @@ venv/
 violations/
 Ihlaller/
 
+# Hassas yapılandırma — token ve API anahtarları içerir
+config.py
+
 # Firebase servis anahtarı (gizli!)
 serviceAccountKey.json
 *.json.secret
