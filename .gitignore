@@ -1,0 +1,62 @@
+# Python kütüphaneleri / sanal ortam
+lib/
+site-packages/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.env
+venv/
+.venv/
+
+# YOLO / ML modeller
+*.pt
+*.onnx
+*.torchscript
+
+# İhlal fotoğrafları (büyük veri)
+violations/
+Ihlaller/
+
+# Firebase servis anahtarı (gizli!)
+serviceAccountKey.json
+*.json.secret
+
+# OpenCV geçici dosyalar
+*.avi
+*.mp4
+
+# Crosswalk kalıcı zon (makineye özel)
+crosswalk_zone.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Overleaf zip (derleme artifaktı)
+rapor_overleaf.zip
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# LaTeX derleme çıktıları
+rapor/*.aux
+rapor/*.log
+rapor/*.toc
+rapor/*.lof
+rapor/*.lot
+rapor/*.out
+rapor/*.synctex.gz
+rapor/*.fls
+rapor/*.fdb_latexmk
+rapor/*.pdf

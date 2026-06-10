@@ -1,0 +1,43 @@
+\ProvidesClass{BUP}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\ProcessOptions\relax
+\LoadClass[a4paper,12pt]{article}
+\RequirePackage[turkish]{babel}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{times}
+\RequirePackage{tikz}
+\RequirePackage[left=4cm,right=2cm,top=3cm,bottom=3cm]{geometry}
+\RequirePackage{amssymb,amsmath,amsthm}
+\RequirePackage{graphics,graphicx}
+\RequirePackage{float}
+\RequirePackage{fancyhdr}
+\RequirePackage{lastpage}
+\RequirePackage{setspace}
+\RequirePackage{tocloft}
+\RequirePackage{url}
+\RequirePackage{hyperref}
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+\onehalfspacing
+
+% listings ayarları
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{orange},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{gray!10},
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!50},
+  tabsize=4,
+  captionpos=b,
+  language=Python
+}

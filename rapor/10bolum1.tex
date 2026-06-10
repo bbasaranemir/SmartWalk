@@ -1,0 +1,127 @@
+\section{SİSTEM MİMARİSİ VE DONANIM}
+
+\subsection{Genel Sistem Mimarisi}
+
+SmartWalk sistemi, donanım katmanı ve yazılım katmanı olmak üzere iki ana bileşenden oluşmaktadır. Donanım katmanında ESP32-S3-WROOM-CAM modülü ve SH1106 OLED ekran yer almaktadır. Yazılım katmanında ise Python 3.12 tabanlı işleme motoru çalışmaktadır. Şekil~\ref{fig:mimari}'de sistemin genel veri akışı gösterilmektedir.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.4cm,
+  box/.style={draw, rounded corners=4pt, minimum width=3.2cm, minimum height=0.8cm,
+              text centered, font=\small},
+  arr/.style={->, >=stealth, thick}
+]
+  \node[box, fill=blue!15]  (esp)    {ESP32-S3 Kamera};
+  \node[box, fill=blue!10,  right=3.6cm of esp]  (stream) {MJPEG Stream};
+  \node[box, fill=green!15, below=of stream] (yolo)   {YOLOv8n Tespiti};
+  \node[box, fill=yellow!20,below=of yolo]  (durum)  {Durum Makinesi};
+  \node[box, fill=orange!20,below left=2cm of durum]  (tg)     {Telegram Bildirimi};
+  \node[box, fill=orange!20,below right=2cm of durum] (fb)     {Firebase Loglama};
+  \node[box, fill=gray!15,  left=3.6cm of yolo]   (zone)   {Bölge Filtresi};
+
+  \draw[arr] (esp)    -- (stream);
+  \draw[arr] (stream) -- (yolo);
+  \draw[arr] (yolo)   -- (zone);
+  \draw[arr] (zone)   -- (durum);
+  \draw[arr] (durum)  -- (tg);
+  \draw[arr] (durum)  -- (fb);
+\end{tikzpicture}
+\caption{SmartWalk Sistem Mimarisi Veri Akış Diyagramı}
+\label{fig:mimari}
+\end{figure}
+
+\subsection{ESP32-S3-WROOM-CAM Donanım Özellikleri}
+
+ESP32-S3-WROOM-CAM, Espressif Systems tarafından üretilen, entegre OV2640 kamera modülü bulunan ve düşük maliyetli IoT uygulamalarına yönelik tasarlanmış bir geliştirme kartıdır. Tablo~\ref{tbl:esp32}'de temel teknik özellikleri listelenmiştir.
+
+\begin{table}[H]
+\centering
+\caption{ESP32-S3-WROOM-CAM Teknik Özellikleri}
+\label{tbl:esp32}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Özellik}          & \textbf{Değer} \\
+\hline
+İşlemci                   & Xtensa LX7 çift çekirdek, 240~MHz \\
+\hline
+SRAM                      & 512~KB dahili + 8~MB PSRAM \\
+\hline
+Flash                     & 8~MB \\
+\hline
+Kamera sensörü            & OV2640 \\
+\hline
+Maksimum çözünürlük       & UXGA (1600$\times$1200) \\
+\hline
+Kullanılan çözünürlük     & VGA (640$\times$480) \\
+\hline
+Kare arabelleği           & Çift (GRAB\_LATEST modu) \\
+\hline
+Bağlantı                  & 802.11~b/g/n WiFi, Bluetooth 5.0 \\
+\hline
+HTTP sunucu portu         & 80 \\
+\hline
+Stream formatı            & MJPEG \\
+\hline
+Besleme gerilimi          & 5~V (USB) \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{SH1106 OLED Ekran Entegrasyonu}
+
+SH1106 denetleyicili 1.3 inç OLED ekran, I2C protokolü üzerinden ESP32'ye bağlanmaktadır. Ekran üzerinde iki satır bilgi gösterilmektedir: birinci satırda sistem durumu (``SmartWalk: AKTİF''), ikinci satırda ise ESP32'nin aldığı IP adresi yer almaktadır. Bu sayede ağ üzerinden Python istemcisinin hangi adrese bağlanması gerektiği fiziksel ekrandan kolayca okunabilmektedir. Python tarafından \texttt{esp32\_controller.py} modülü, HTTP istekleri aracılığıyla OLED içeriğini güncelleyebilmektedir.
+
+\subsection{ESP32 Firmware Açıklaması}
+
+\texttt{esp32\_firmware.ino} dosyasında yer alan Arduino kodu üç temel işlevi yerine getirmektedir:
+
+\begin{enumerate}
+  \item \textbf{WiFi Bağlantısı:} Belirlenen SSID ve parola ile erişim noktasına bağlanır; bağlantı kurulunca IP adresi seri monitöre ve OLED ekrana yazdırılır.
+  \item \textbf{MJPEG Stream Servisi:} Port 80'de başlatılan HTTP sunucusu, \texttt{/} endpoint'i üzerinden sürekli MJPEG akışı sağlar. Sınır dizgisi (boundary) olarak \texttt{123456789000000000000987654321} kullanılmaktadır; her JPEG karesi bu boundary ile çerçevelenerek gönderilir.
+  \item \textbf{OLED Sürücüsü:} SH1106 ile haberleşmek için özel bir yazılım I2C sürücüsü kullanılmaktadır; Python tarafından gönderilen HTTP istekleriyle ekran içeriği güncellenebilmektedir.
+\end{enumerate}
+
+Çift frame buffer ve GRAB\_LATEST modu etkinleştirilerek yavaş istemci bağlantılarında kare birikimine bağlı gecikme en aza indirilmiştir.
+
+\subsection{Python Yazılım Bileşenleri}
+
+Tablo~\ref{tbl:modüller}'de Python uygulamasını oluşturan modüller ve her birinin görevi özetlenmiştir.
+
+\begin{table}[H]
+\centering
+\caption{Python Modülleri ve Görevleri}
+\label{tbl:modüller}
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Modül}                & \textbf{Görev} \\
+\hline
+\texttt{main.py}              & Ana uygulama döngüsü; argparse ile parametre ayrıştırma, durum makinesini yönetme \\
+\hline
+\texttt{detector.py}          & YOLOv8n sarmalayıcısı (\texttt{SmartWalkDetector}); model yükleme ve çıkarım \\
+\hline
+\texttt{zones.py}             & \texttt{CrosswalkZone}: polygon içindeki tespitleri filtreleme \\
+\hline
+\texttt{crosswalk\_detector.py} & Canny+HoughLinesP ile otomatik yaya geçidi tespiti; JSON'a kalıcı kayıt \\
+\hline
+\texttt{crosswalk\_setup.py}  & İnteraktif 4-nokta bölge seçici (fare tıklama arayüzü) \\
+\hline
+\texttt{violation\_handler.py}& İhlal yöneticisi; ayrı thread'de çalışır, fotoğraf kaydeder \\
+\hline
+\texttt{esp32\_stream.py}     & \texttt{ESP32MJPEGCapture}: JPEG marker tabanlı MJPEG okuyucu \\
+\hline
+\texttt{esp32\_controller.py} & HTTP üzerinden ESP32 OLED kontrol arayüzü \\
+\hline
+\texttt{telegram\_notifier.py}& Telegram Bot API aracılığıyla fotoğraflı bildirim gönderme \\
+\hline
+\texttt{firebase\_logger.py}  & Firebase Realtime Database'e ihlal kaydı (opsiyonel) \\
+\hline
+\texttt{plate\_reader.py}     & EasyOCR ile plaka okuma (opsiyonel) \\
+\hline
+\texttt{arduino\_controller.py}& Seri port üzerinden Arduino kontrolü (opsiyonel) \\
+\hline
+\texttt{config.py}            & Tüm yapılandırma parametreleri (URL, eşikler, anahtarlar) \\
+\hline
+\end{tabular}
+\end{table}
+

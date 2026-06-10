@@ -1,0 +1,95 @@
+\appendix
+
+\section{Kurulum Talimatları}
+\label{ek:kurulum}
+
+\subsection*{Gereksinimler}
+
+\begin{itemize}
+  \item Python 3.12 veya üzeri
+  \item Arduino IDE 2.x (ESP32 firmware yüklemek için)
+  \item ESP32-S3-WROOM-CAM modülü ve USB kablosu
+\end{itemize}
+
+\subsection*{Adım Adım Kurulum}
+
+\begin{enumerate}
+  \item \textbf{Python bağımlılıklarını yükleyin:}
+\begin{lstlisting}[language=bash, caption={Python bağımlılık kurulumu}]
+pip install ultralytics supervision opencv-python requests
+# Opsiyonel modüller icin:
+pip install firebase-admin easyocr pyserial
+\end{lstlisting}
+
+  \item \textbf{ESP32 firmware'ini yükleyin:}
+  \begin{itemize}
+    \item Arduino IDE'de \texttt{Dosya > Aç} menüsünden \texttt{esp32\_firmware/esp32\_firmware.ino} dosyasını açın.
+    \item \texttt{ssid} ve \texttt{password} değişkenlerini kendi WiFi ağ bilgilerinizle güncelleyin.
+    \item Kart olarak \textit{ESP32S3 Dev Module} seçin; PSRAM'ı \textit{OPI PSRAM} olarak ayarlayın.
+    \item \textbf{Yükle} butonuna basın; yükleme tamamlanınca seri monitörden IP adresini not alın.
+  \end{itemize}
+
+  \item \textbf{Python konfigürasyonunu güncelleyin:}
+\begin{lstlisting}[language=Python, caption={config.py güncellenmesi}]
+# config.py icinde:
+ESP32_BASE_URL = "http://192.168.x.x"  # Gercek IP adresini girin
+\end{lstlisting}
+
+  \item \textbf{Uygulamayı başlatın:}
+\begin{lstlisting}[language=bash, caption={Uygulama başlatma komutu}]
+python main.py
+# Isteğe bagli parametreler:
+python main.py --frame-skip 3 --confirm 3 --no-firebase
+\end{lstlisting}
+
+  \item İlk çalıştırmada yaya geçidi otomatik olarak tespit edilir. Tespit başarısız olursa açılan pencerede fare ile 4 köşe noktasını tıklayın.
+\end{enumerate}
+
+\section{Konfigürasyon Parametreleri}
+\label{ek:konfig}
+
+Tablo~\ref{tbl:konfig}'de \texttt{config.py} içindeki temel yapılandırma parametreleri ve varsayılan değerleri verilmiştir.
+
+\begin{table}[H]
+\centering
+\caption{config.py Parametreleri}
+\label{tbl:konfig}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{Parametre}       & \textbf{Varsayılan Değer} & \textbf{Açıklama} \\
+\hline
+\texttt{ESP32\_BASE\_URL}    & \texttt{http://192.168.1.100} & ESP32 HTTP sunucu adresi \\
+\hline
+\texttt{CAMERA\_URL}         & \texttt{ESP32\_BASE\_URL + "/"} & MJPEG stream URL'i \\
+\hline
+\texttt{FRAME\_SKIP}         & \texttt{2}               & Kaç karede bir işleme yapılacağı \\
+\hline
+\texttt{VIOLATION\_CONFIRM}  & \texttt{2}               & İhlal onayı için gereken ardışık kare sayısı \\
+\hline
+\texttt{COOLDOWN\_SECONDS}   & \texttt{30}              & İhlal bildirimleri arası bekleme süresi (saniye) \\
+\hline
+\texttt{YOLO\_MODEL}         & \texttt{"yolov8n.pt"}    & Kullanılacak YOLO model dosyası \\
+\hline
+\texttt{CONFIDENCE}          & \texttt{0.40}            & Nesne tespiti güven eşiği \\
+\hline
+\texttt{TELEGRAM\_TOKEN}     & \texttt{""}              & Telegram Bot API token'ı \\
+\hline
+\texttt{TELEGRAM\_CHAT\_ID}  & \texttt{""}              & Bildirim gönderilecek Telegram chat ID \\
+\hline
+\texttt{FIREBASE\_CRED}      & \texttt{None}            & Firebase servis hesabı JSON yolu (opsiyonel) \\
+\hline
+\texttt{VIOLATION\_DIR}      & \texttt{"violations/"}   & İhlal fotoğraflarının kaydedileceği klasör \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{GitHub Deposu}
+\label{ek:github}
+
+Projenin kaynak kodlarına aşağıdaki GitHub deposundan erişilebilir:
+
+\begin{center}
+  \url{https://github.com/emirbasaran/smartwalk}
+\end{center}
+
+Depoda ESP32 firmware, Python kaynak kodları ve örnek yapılandırma dosyaları yer almaktadır.
